@@ -1,9 +1,11 @@
-import Image from 'next/image'
+import { Box, Heading } from '@chakra-ui/react'
 
 export default function Home() {
   return (
     <>
-      <div>Hi, there!</div>
+      <Box pt={'5em'}>
+        <Heading textAlign={'center'}>Home Page</Heading>
+      </Box>
     </>
   )
 }
