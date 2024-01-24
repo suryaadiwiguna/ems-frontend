@@ -8,7 +8,7 @@ export default function MyEvent({ event }: { event: events }) {
                 <Box
                     minH={'150px'}
                     minW={'150px'}
-                    bgImage='url("/img.png")'
+                    bgImage={`url(${process.env.NEXT_PUBLIC_BASE_URL}/${event.banner_url})`}
                     bgPosition={'center'}
                     bgRepeat={'no-repeat'}
                     bgSize={'contain'}
@@ -24,7 +24,7 @@ export default function MyEvent({ event }: { event: events }) {
                             : "Free"}
                     </Text>
                     <Divider />
-                    <Text>{event.organizerID}</Text>
+                    <Text>{event.organization_name}</Text>
                 </Stack>
 
             </Card>

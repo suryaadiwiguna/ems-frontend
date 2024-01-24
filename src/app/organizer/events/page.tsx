@@ -1,22 +1,22 @@
 'use client'
-import { Heading, Spinner, Text } from "@chakra-ui/react"
+import { Heading, Text } from "@chakra-ui/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import MyEvents from "./components/MyEvents"
 import { Link } from "@chakra-ui/next-js"
 
-export default function page() {
+export default async function page() {
     const [events, setEvents] = useState<validEventResponse>()
     const [isLoading, setLoading] = useState(true)
 
     useEffect(() => {
+        setLoading(true)
         getEvents()
         setLoading(false)
     }, [])
 
     async function getEvents() {
-        console.log(process.env.BASE_URL)
-        await axios.get(process.env.GET_EVENTS!)
+        await axios.get('/api/event/get-events')
             .then((response: AxiosResponse) => {
                 setEvents({ ...response.data })
             })
@@ -24,12 +24,12 @@ export default function page() {
                 alert(err)
             })
     }
-    console.log(events)
-    console.log(events?.data)
+    // console.log(events)
+    // console.log(events?.data)
     return (
         <>
             {isLoading
-                ? <Spinner />
+                ? null //Loading handled by loading.tsx
                 : events?.data.length
                     ? <>
                         <Heading mb={'2rem'}>Events</Heading>

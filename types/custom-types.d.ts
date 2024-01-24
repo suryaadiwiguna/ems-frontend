@@ -13,6 +13,8 @@ interface events {
     ticketPrice: number
     status: string
     organizerID: string
+    banner_url: string
+    organization_name: string
 }
 
 interface validEventResponse {
