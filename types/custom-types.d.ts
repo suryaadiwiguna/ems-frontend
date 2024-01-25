@@ -23,3 +23,10 @@ interface validEventResponse {
     data: [events]
     msg: string
 }
+
+interface validAuthResponse {
+    isSuccess: Boolean
+    code: number
+    data: any[] | null,
+    msg: string
+}

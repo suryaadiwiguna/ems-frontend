@@ -60,10 +60,10 @@ export default function Login() {
                     <Button colorScheme="blue" onClick={logout} isLoading={isSubmitting}>Logout</Button>
                 </div>
                 :
-                <Stack maxW={'450px'} gap={5} p={'2rem'} align={'center'} m={'auto'} borderRadius={'10px'} border={'solid'} borderColor={'gray.300'} borderWidth={1}>
+                <Stack maxW={'500px'} gap={5} p={'2rem'} align={'center'} m={'auto'} borderRadius={'10px'} borderColor={'gray.300'} borderWidth={{ base: 0, sm: 1 }}>
                     <Heading>Login</Heading>
-                    <form onSubmit={formik.handleSubmit}>
-                        <Stack gap={5} minW={'400px'}>
+                    <form onSubmit={formik.handleSubmit} style={{ width: '100%' }}>
+                        <Stack gap={5} >
                             <FormControl isRequired isInvalid={Boolean(formik.touched.email && formik.errors.email)}>
                                 <FormLabel htmlFor="email">Email</FormLabel>
                                 <Input

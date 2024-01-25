@@ -1,11 +1,29 @@
 'use client'
-import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text, RadioGroup, Radio, Flex } from "@chakra-ui/react";
+import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text, RadioGroup, Radio, Flex, useDisclosure } from "@chakra-ui/react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from 'yup'
 import Cookies from "universal-cookie";
 import { Link } from "@chakra-ui/next-js";
+import ResponseModal from "./responseModal";
+
+const dummySuccessResponse = {
+    isSuccess: true,
+    code: 1,
+    data: [{
+        some: "object",
+        will: "be sent here"
+    }],
+    msg: "Account created successfully"
+}
+
+const dummyFailedResponse = {
+    isSuccess: false,
+    code: 0,
+    data: null,
+    msg: "The email has been used by an existing account."
+}
 
 export default function Register() {
     const cookies = new Cookies(null, { path: '/' })
@@ -13,6 +31,8 @@ export default function Register() {
     const [isSubmitting, setSubmitting] = useState(false)
     const [isLoading, setLoading] = useState(true)
     const [token, setToken] = useState()
+    const [response, setResponse] = useState<undefined | validAuthResponse | unknown>()
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     useEffect(() => {
         setLoading(true)
@@ -61,12 +81,17 @@ export default function Register() {
             axios.post('http://localhost:1010/auth/register', values)
                 .then((res: AxiosResponse) => {
                     console.log(res)
-                    alert(res.data)
+                    setResponse(res.data)
+                    onOpen()
                     setSubmitting(false)
                 })
                 .catch((err: AxiosError) => {
+                    // alert(`Error ${JSON.stringify(err)}`)
+                    // console.log(err.response?.data)
+                    setResponse(err.response?.data)
+                    onOpen()
                     setSubmitting(false)
-                    alert(`Error ${JSON.stringify(err)}`)
+
                 })
         }
     })
@@ -77,7 +102,7 @@ export default function Register() {
         setToken(undefined)
     }
 
-    console.log(formik.values.role)
+    // console.log(formik.values.role)
 
     return (
         <>{isLoading
@@ -233,6 +258,8 @@ export default function Register() {
                     </form>
                 </Stack>
         }
+            {/* <Button onClick={onOpen}>Open Modal</Button> */}
+            <ResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={dummySuccessResponse} />
         </>
     )
 }
