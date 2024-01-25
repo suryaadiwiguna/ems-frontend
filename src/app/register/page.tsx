@@ -1,5 +1,5 @@
 'use client'
-import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text, RadioGroup, Radio, Flex, useDisclosure } from "@chakra-ui/react";
+import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text, RadioGroup, Radio, Flex, useDisclosure, InputRightElement, InputGroup } from "@chakra-ui/react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
@@ -7,23 +7,24 @@ import * as Yup from 'yup'
 import Cookies from "universal-cookie";
 import { Link } from "@chakra-ui/next-js";
 import ResponseModal from "./responseModal";
+import { LuX } from "react-icons/lu";
 
-const dummySuccessResponse = {
-    isSuccess: true,
-    code: 1,
-    data: [{
-        some: "object",
-        will: "be sent here"
-    }],
-    msg: "Account created successfully"
-}
+// const dummySuccessResponse = {
+//     isSuccess: true,
+//     code: 1,
+//     data: [{
+//         some: "object",
+//         will: "be sent here"
+//     }],
+//     msg: "Account created successfully"
+// }
 
-const dummyFailedResponse = {
-    isSuccess: false,
-    code: 0,
-    data: null,
-    msg: "The email has been used by an existing account."
-}
+// const dummyFailedResponse = {
+//     isSuccess: false,
+//     code: 0,
+//     data: null,
+//     msg: "The email has been used by an existing account."
+// }
 
 export default function Register() {
     const cookies = new Cookies(null, { path: '/' })
@@ -31,7 +32,7 @@ export default function Register() {
     const [isSubmitting, setSubmitting] = useState(false)
     const [isLoading, setLoading] = useState(true)
     const [token, setToken] = useState()
-    const [response, setResponse] = useState<undefined | validAuthResponse | unknown>()
+    const [response, setResponse] = useState<undefined | validAuthResponse>()
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     useEffect(() => {
@@ -88,7 +89,7 @@ export default function Register() {
                 .catch((err: AxiosError) => {
                     // alert(`Error ${JSON.stringify(err)}`)
                     // console.log(err.response?.data)
-                    setResponse(err.response?.data)
+                    setResponse((err.response?.data) as validAuthResponse)
                     onOpen()
                     setSubmitting(false)
 
@@ -232,15 +233,20 @@ export default function Register() {
 
                             <FormControl isInvalid={Boolean(formik.touched.referrerCode && formik.errors.referrerCode)}>
                                 <FormLabel htmlFor="referrerCode">Referral Code</FormLabel>
-                                <Input
-                                    id="referrerCode"
-                                    name="referrerCode"
-                                    type="text"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    value={formik.values.referrerCode}
-                                    bg={'white'}
-                                />
+                                <InputGroup>
+                                    <Input
+                                        id="referrerCode"
+                                        name="referrerCode"
+                                        type="text"
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        value={formik.values.referrerCode}
+                                        bg={'white'}
+                                    />
+                                    <InputRightElement onClick={() => formik.setFieldValue('referrerCode', '')}>
+                                        {formik.values.referrerCode ? <LuX /> : null}
+                                    </InputRightElement>
+                                </InputGroup>
                                 <FormErrorMessage> {formik.errors.referrerCode} </FormErrorMessage>
                             </FormControl>
 
@@ -259,7 +265,7 @@ export default function Register() {
                 </Stack>
         }
             {/* <Button onClick={onOpen}>Open Modal</Button> */}
-            <ResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={dummySuccessResponse} />
+            <ResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={response} />
         </>
     )
 }

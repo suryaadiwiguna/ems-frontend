@@ -1,9 +1,8 @@
 import { Link } from "@chakra-ui/next-js"
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, Text, ModalFooter, Button, Stack } from "@chakra-ui/react"
-import { LuCheckCircle2, LuUserX2 } from "react-icons/lu"
+import { LuCheckCircle2, LuMoreHorizontal, LuUserX2, LuXCircle } from "react-icons/lu"
 
-export default function ResponseModal({ isOpen, onOpen, onClose, response }: { isOpen: boolean, onOpen: () => void, onClose: () => void, response: validAuthResponse }) {
-    console.log(response)
+export default function ResponseModal({ isOpen, onOpen, onClose, response }: { isOpen: boolean, onOpen: () => void, onClose: () => void, response: validAuthResponse | undefined }) {
 
     if (!response) return (<></>)
 
@@ -44,6 +43,27 @@ export default function ResponseModal({ isOpen, onOpen, onClose, response }: { i
                 <ModalFooter w={'full'}>
                     <Stack w={'full'} >
                         <Link href={'/login'} > <Button colorScheme="blue" w={'full'} onClick={onClose}>Login</Button></Link>
+                    </Stack>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    )
+
+    if (response.code === -1) return (
+        <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+            <ModalOverlay />
+            <ModalContent alignItems={'center'} p={3} m={6}>
+                <ModalHeader>Oops ...</ModalHeader>
+                <ModalBody >
+                    <Stack align={'center'} textAlign={'center'}>
+                        <LuXCircle color="orange" strokeWidth={0.8} size={75} />
+                        <Text fontWeight={500}>{`${response.msg}`}</Text>
+                    </Stack>
+                </ModalBody>
+
+                <ModalFooter w={'full'}>
+                    <Stack w={'full'} >
+                        <Button w={'full'} onClick={onClose}>Close</Button>
                     </Stack>
                 </ModalFooter>
             </ModalContent>

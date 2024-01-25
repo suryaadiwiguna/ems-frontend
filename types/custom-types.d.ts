@@ -27,6 +27,6 @@ interface validEventResponse {
 interface validAuthResponse {
     isSuccess: Boolean
     code: number
-    data: any[] | null,
+    data: any[] | null
     msg: string
-}
+} 
