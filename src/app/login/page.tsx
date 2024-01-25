@@ -1,10 +1,11 @@
 'use client'
-import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner } from "@chakra-ui/react";
+import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text } from "@chakra-ui/react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from 'yup'
 import Cookies from "universal-cookie";
+import { Link } from "@chakra-ui/next-js";
 
 export default function Login() {
     const cookies = new Cookies(null, { path: '/' })
@@ -52,7 +53,7 @@ export default function Login() {
 
     return (
         <>{isLoading
-            ? <Spinner />
+            ? null
             : token
                 ? <div>
                     <p> You are logged in.</p>
@@ -99,6 +100,7 @@ export default function Login() {
                             >
                                 Login
                             </Button>
+                            <Text>Don't have an account? <Link href={'/register'} color={'blue'}>Create one</Link></Text>
                         </Stack>
                     </form>
                 </Stack>
