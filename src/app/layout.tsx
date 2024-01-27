@@ -19,7 +19,6 @@ export default function RootLayout({
       <body className={inter.className} >
         <Providers>
           <Navbar />
-          <div style={{ height: '5em' }} />
           {children}
         </Providers>
       </body>

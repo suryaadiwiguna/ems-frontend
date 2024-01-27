@@ -1,51 +1,70 @@
-'use client'
-import { Heading, Text } from "@chakra-ui/react"
+
+import { Heading, Text, Card, Box, Divider, Stack, Flex } from "@chakra-ui/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
-import { useEffect, useState } from "react"
-import MyEvents from "./components/MyEvents"
-import { Link } from "@chakra-ui/next-js"
+import Link from "next/link"
 
-export default async function page() {
-    const [events, setEvents] = useState<validEventResponse>()
-    const [isLoading, setLoading] = useState(true)
+export default async function Page() {
 
-    useEffect(() => {
-        setLoading(true)
-        getEvents()
-        setLoading(false)
-    }, [])
+    const events = await axios.get('http://localhost:1010/event/get-events')
+        .then((response: AxiosResponse) => {
+            return response.data
+        })
+        .catch((err: AxiosError) => {
+            return err
+        })
 
-    async function getEvents() {
-        await axios.get('/api/event/get-events')
-            .then((response: AxiosResponse) => {
-                setEvents({ ...response.data })
-            })
-            .catch((err: AxiosError) => {
-                alert(err)
-            })
-    }
-    // console.log(events)
-    // console.log(events?.data)
-    return (
+    console.log("Server?")
+
+    if (!events.data.length) return (
         <>
-            {isLoading
-                ? null //Loading handled by loading.tsx
-                : events?.data.length
-                    ? <>
-                        <Heading mb={'2rem'}>Events</Heading>
-                        {
-                            events.data.map((event) => {
-                                return <>
-                                    <MyEvents event={event} />
-                                </>
-                            })
-                        }
-                    </>
-                    : <>
-                        <Heading mb={'2rem'}>Events</Heading>
-                        <Text>You have no events.</Text> <Link color={'blue'} href={'/organizer/events/new'}> Create one?</Link>
-                    </>
-            }
+            <Heading mb={'2rem'}>Events</Heading>
+            <Text>You have no events.</Text> <Link href={'/organizer/events/new'}> Create one?</Link>
         </>
     )
+
+    if (events.data?.length) return (
+        <>
+            <Heading mb={'2rem'}>Events</Heading>
+            <Flex direction={'row'} gap={5}>
+                {events.data.map((event: events) => {
+                    console.log("Hii")
+                    return (
+                        <div key={event.id}>
+                            <Link href={`./events/${event.id}`}>
+                                <Card direction={{ base: 'row', lg: 'column' }} variant={'outline'}>
+                                    <Box
+                                        minH={'150px'}
+                                        minW={'150px'}
+                                        bgImage={`url(${process.env.BASE_URL}/${event.banner_url})`}
+                                        bgPosition={'center'}
+                                        bgRepeat={'no-repeat'}
+                                        bgSize={'contain'}
+                                    >
+                                    </Box>
+
+                                    <Stack spacing={3} maxW={'full'} p={'1rem'}>
+                                        <Heading size={'md'}>{event.title}</Heading>
+                                        <Text>{new Date(event.eventStartDate).toDateString()}</Text>
+                                        <Text fontWeight={600}>
+                                            {event.ticketPrice
+                                                ? new Intl.NumberFormat('in-ID', { style: 'currency', currency: 'IDR' }).format(event.ticketPrice)
+                                                : "Free"}
+                                        </Text>
+                                        <Divider />
+                                        <Text>{event.organization_name}</Text>
+                                    </Stack>
+
+                                </Card>
+                            </Link>
+
+                        </div>
+                    )
+                })}
+            </Flex>
+
+        </>
+    )
+
+    //Fallback
+    return (<>Opps... Something went wrong.</>)
 }

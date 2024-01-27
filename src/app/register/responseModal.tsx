@@ -1,11 +1,11 @@
 import { Link } from "@chakra-ui/next-js"
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, Text, ModalFooter, Button, Stack } from "@chakra-ui/react"
-import { LuCheckCircle2, LuMoreHorizontal, LuUserX2, LuXCircle } from "react-icons/lu"
+import { LuCheckCircle2, LuTicket, LuUserX2, LuXCircle } from "react-icons/lu"
 
 export default function ResponseModal({ isOpen, onOpen, onClose, response }: { isOpen: boolean, onOpen: () => void, onClose: () => void, response: validAuthResponse | undefined }) {
 
     if (!response) return (<></>)
-
+    //Handling bad request: used email
     if (response.code === 0) return (
         <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} >
             <ModalOverlay />
@@ -28,6 +28,7 @@ export default function ResponseModal({ isOpen, onOpen, onClose, response }: { i
         </Modal>
     )
 
+    //Handling success without referral code
     if (response.code === 1) return (
         <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
@@ -49,6 +50,31 @@ export default function ResponseModal({ isOpen, onOpen, onClose, response }: { i
         </Modal>
     )
 
+    //Handling success with referral code
+    if (response.code === 2) return (
+        <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+            <ModalOverlay />
+            <ModalContent alignItems={'center'} p={3} m={6}>
+                <ModalHeader>Success</ModalHeader>
+                <ModalBody >
+                    <Stack align={'center'} textAlign={'center'} gap={3}>
+                        <LuTicket color="teal" strokeWidth={0.8} size={75} />
+                        <span>Congratulations! Your account is successfully created and you received a voucher from the Referral Code you used.</span>
+                        <span>Coupon detail: <b>{response.data.coupon?.description}</b></span>
+                        <span>Login now to use it on your next purchase.</span>
+                    </Stack>
+                </ModalBody>
+
+                <ModalFooter w={'full'}>
+                    <Stack w={'full'} >
+                        <Link href={'/login'} > <Button colorScheme="blue" w={'full'} onClick={onClose}>Login</Button></Link>
+                    </Stack>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    )
+
+    //Handling failed: wrong referral code
     if (response.code === -1) return (
         <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
@@ -70,6 +96,7 @@ export default function ResponseModal({ isOpen, onOpen, onClose, response }: { i
         </Modal>
     )
 
+    //Handling unhandled event
     return (
         <>
             <Modal isOpen={isOpen} onClose={onClose}>

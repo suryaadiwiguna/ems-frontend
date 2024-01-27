@@ -1,11 +1,14 @@
 'use client'
-import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Spinner, Text } from "@chakra-ui/react";
+import { FormControl, FormLabel, Stack, Input, Heading, FormErrorMessage, Button, Text, useDisclosure } from "@chakra-ui/react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from 'yup'
 import Cookies from "universal-cookie";
 import { Link } from "@chakra-ui/next-js";
+import LoginResponseModal from "./responseModal";
+import { redirect } from "next/navigation";
+import LoginLoading from "./loading";
 
 export default function Login() {
     const cookies = new Cookies(null, { path: '/' })
@@ -13,11 +16,14 @@ export default function Login() {
     const [isSubmitting, setSubmitting] = useState(false)
     const [isLoading, setLoading] = useState(true)
     const [token, setToken] = useState()
+    const [response, setResponse] = useState<undefined | validAuthResponse>()
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     useEffect(() => {
         setLoading(true)
         setToken(cookies.get('token'))
         setLoading(false)
+        if (token) redirect('/')
     }, [token])
 
     const formik = useFormik({
@@ -29,35 +35,33 @@ export default function Login() {
             email: Yup.string().email("Invalid email address").required("Email is required"),
             password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required")
         }),
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             setSubmitting(true)
-            axios.post('http://localhost:1010/auth/login', values)
+            await axios.post('http://localhost:1010/auth/login', values)
                 .then((res: AxiosResponse) => {
                     console.log(res)
+                    setResponse(res.data)
                     cookies.set('token', res.data.data.token)
                     setToken(res.data.data.token)
+                    onOpen()
                     setSubmitting(false)
                 })
+                .then(async () => await setTimeout(() => redirect('/register'), 5000))
                 .catch((err: AxiosError) => {
+                    setResponse((err.response?.data) as validAuthResponse)
+                    onOpen()
                     setSubmitting(false)
-                    alert(`Error ${JSON.stringify(err)}`)
                 })
         }
     })
 
-    function logout() {
-        cookies.remove('token')
-        // setSubmitting(false)
-        setToken(undefined)
-    }
-
     return (
         <>{isLoading
-            ? null
+            ? <LoginLoading />
             : token
                 ? <div>
                     <p> You are logged in.</p>
-                    <Button colorScheme="blue" onClick={logout} isLoading={isSubmitting}>Logout</Button>
+                    {/* <Button colorScheme="blue" onClick={logout} isLoading={isSubmitting}>Logout</Button> */}
                 </div>
                 :
                 <Stack maxW={'500px'} gap={5} p={'2rem'} align={'center'} m={'auto'} borderRadius={'10px'} borderColor={'gray.300'} borderWidth={{ base: 0, sm: 1 }}>
@@ -105,6 +109,7 @@ export default function Login() {
                     </form>
                 </Stack>
         }
+            <LoginResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={response} />
         </>
     )
 }

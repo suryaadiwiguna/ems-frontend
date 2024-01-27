@@ -7,7 +7,7 @@ export default function MainMenu() {
 
     return (
         <>
-            <Flex pt={'5em'} direction={'column'} gap={'0.5em'} wrap={'wrap'} >
+            <Flex direction={'column'} gap={'0.5em'} wrap={'wrap'} >
                 <Accordion allowMultiple defaultIndex={[0]} >
                     <AccordionItem >
                         <AccordionButton>

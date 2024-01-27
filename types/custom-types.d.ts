@@ -17,16 +17,35 @@ interface events {
     organization_name: string
 }
 
-interface validEventResponse {
+interface validEventsResponse {
     isSuccess: Boolean
     code: number
     data: [events]
     msg: string
 }
 
+interface validEventResponse {
+    isSuccess: Boolean
+    code: number
+    data: events
+    msg: string
+}
+
 interface validAuthResponse {
     isSuccess: Boolean
     code: number
-    data: any[] | null
+    data: {
+        user?: {},
+        coupon?: {
+            id: string,
+            type: string,
+            expiredAt: string | Date,
+            description: string,
+            value: number
+        } | null,
+        token?: string
+    }
     msg: string
+
+
 } 
