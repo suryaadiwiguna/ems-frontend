@@ -2,7 +2,7 @@ import { Link } from "@chakra-ui/next-js"
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, Text, ModalFooter, Button, Stack } from "@chakra-ui/react"
 import { LuCheckCircle2, LuTicket, LuUserX2, LuXCircle } from "react-icons/lu"
 
-export default function ResponseModal({ isOpen, onOpen, onClose, response }: { isOpen: boolean, onOpen: () => void, onClose: () => void, response: validAuthResponse | undefined }) {
+export default function RegisterResponseModal({ isOpen, onOpen, onClose, response }: { isOpen: boolean, onOpen: () => void, onClose: () => void, response: validAuthResponse | undefined }) {
 
     if (!response) return (<></>)
     //Handling bad request: used email
@@ -75,7 +75,7 @@ export default function ResponseModal({ isOpen, onOpen, onClose, response }: { i
     )
 
     //Handling failed: wrong referral code
-    if (response.code === -1) return (
+    if (response.code === -2) return (
         <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
             <ModalContent alignItems={'center'} p={3} m={6}>

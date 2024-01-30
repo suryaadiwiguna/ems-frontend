@@ -1,16 +1,27 @@
 import Link from "next/link"
 import { Button, Divider, Flex, Heading, Image, Stack, Text } from "@chakra-ui/react"
 import axios, { AxiosError, AxiosResponse } from "axios"
+import { cookies } from "next/headers"
+import UnauthorizedPage from "@/app/components/unauthorized"
 
 export default async function EventPage({ params }: { params: { event: events["id"] } }) {
+    console.log(process.env.GET_MY_EVENT_DETAILS)
 
-    const eventDetails: validEventResponse = await axios.get(process.env.GET_EVENT_DETAILS + params.event)
+    const eventDetails: validEventResponse = await axios.get(process.env.GET_MY_EVENT_DETAILS + params.event, {
+        headers: {
+            "Authorization": `Bearer ${cookies().get('token')!.value!}`
+        }
+    })
         .then((res: AxiosResponse) => {
             return res.data
         })
         .catch((err: AxiosError) => {
             return err.response?.data
         })
+
+    // console.log(eventDetails)
+
+    if (eventDetails.code === -1) return <UnauthorizedPage />
 
     const { createdAt, updatedAt, title, description, eventStartDate, eventEndDate, eventStartTime, eventEndTime, maxParticipants, ticketPrice, status, banner_url, organization_name } = eventDetails.data
 
@@ -26,7 +37,9 @@ export default async function EventPage({ params }: { params: { event: events["i
 
                 <Heading size={'md'}>Seating</Heading>
                 <Stack gap={0}>
-                    <Text>Ticket Price: {new Intl.NumberFormat('in-ID', { style: 'currency', currency: 'IDR' }).format(ticketPrice)}</Text>
+                    <Text>Ticket Price: {ticketPrice
+                        ? new Intl.NumberFormat('in-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(ticketPrice)
+                        : "Free"}</Text>
                     <Text>Max. Participants: {maxParticipants} people</Text>
                 </Stack>
 

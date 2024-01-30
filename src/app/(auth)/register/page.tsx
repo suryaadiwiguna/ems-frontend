@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import * as Yup from 'yup'
 import Cookies from "universal-cookie";
 import { Link } from "@chakra-ui/next-js";
-import ResponseModal from "./responseModal";
+import RegisterResponseModal from "./registrationResponse";
 import { LuX } from "react-icons/lu";
 
 // const dummySuccessResponse = {
@@ -110,11 +110,13 @@ export default function Register() {
             ? null
             : token
                 ? <div>
-                    <p> You are logged in.</p>
-                    <Button colorScheme="blue" onClick={logout} isLoading={isSubmitting}>Logout</Button>
+                    <Stack m={'auto'} p={'1rem'} gap={4} w={'fit-content'} align={'center'} textAlign={'center'}>
+                        <Text> You are already logged-in. You need to logout first to create an account.</Text>
+                        <Button colorScheme="blue" onClick={logout} isLoading={isSubmitting} w={'fit-content'}>Logout</Button>
+                    </Stack>
                 </div>
                 :
-                <Stack maxW={'650px'} gap={5} p={'2rem'} align={'center'} m={'auto'} borderRadius={'10px'} borderColor={'gray.300'} borderWidth={{ base: 0, sm: 1 }}>
+                <Stack maxW={'650px'} gap={5} p={'2rem'} align={'center'} m={'auto'} >
                     <Heading mb={'2rem'} textAlign={'center'}>Create Account</Heading>
                     <form onSubmit={formik.handleSubmit}>
                         <Stack gap={5} >
@@ -265,7 +267,7 @@ export default function Register() {
                 </Stack>
         }
             {/* <Button onClick={onOpen}>Open Modal</Button> */}
-            <ResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={response} />
+            <RegisterResponseModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} response={response} />
         </>
     )
 }
